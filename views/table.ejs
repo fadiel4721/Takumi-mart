@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Takumi Mart</title>
+    <!-- Tautan ke Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      body {
+          background: linear-gradient(to right, #00416a, #e4e5e6);
+      }
+  </style>
+  </head>
+  <body>
+    <div class="card shadow mb-4">
+      <div
+        class="card-header py-3 d-flex justify-content-between align-items-center"
+      >
+      <P>Daftar Produk</p>
+        <!-- Logo Takumi Mart -->
+        <img
+          src="https://tinyurl.com/4p7cau79"
+          alt="Takumi Mart Logo"
+          class="takumi-logo"
+          width="235"
+          height="100"
+        />
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          data-toggle="modal"
+          data-target="#add-modal"
+        >
+          <i class="fas fa-plus"></i> Tambah produk
+        </button>
+        
+
+      </div>
+      <div class="card-body">
+        <!-- Pencarian Produk -->
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Cari produk..."
+            aria-label="Cari produk"
+            aria-describedby="button-addon2"
+            id="searchInput"
+          />
+          <div class="input-group-append">
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              id="button-addon2"
+              onclick="searchProduct()"
+            >
+              <i class="fas fa-search"></i>
+              <!-- Ikon pencarian -->
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabel Produk -->
+        <div class="table-responsive">
+          <table
+            class="table table-bordered"
+            id="dataTable"
+            width="100%"
+            cellspacing="0"
+          >
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Produk</th>
+                <th>Kategori</th>
+                <th>Harga</th>
+                <th>Stok</th>
+                <th>Deskripsi</th>
+                <th>Gambar</th>
+                <th>Action</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for(let i = 0; i < takumi.length; i++){ %>
+              <tr>
+                <td><%= i + 1 %></td>
+                <td><%= takumi[i].nama %></td>
+                <td><%= takumi[i].kategori %></td>
+                <td><%= takumi[i].harga %></td>
+                <td><%= takumi[i].stok %></td>
+                <td><%= takumi[i].deskripsi %></td>
+                <td>
+                  <img
+                    src="<%= takumi[i].gambar %>"
+                    alt="Product Image"
+                    class="img-thumbnail"
+                    width="130"
+                  />
+                </td>
+                <td class="text-center">
+                  <form
+                    action="/takumi/<%= takumi[i].id %>?_method=DELETE"
+                    method="POST"
+                  >
+                    <a
+                      href="javascript:void()"
+                      class="btn btn-outline-warning btn-sm button-update"
+                      data-id="<%= takumi[i]._id %>"
+                      data-kode_barang="<%= takumi[i].kode_barang %>"
+                      data-nama="<%= takumi[i].nama %>"
+                      data-kategori="<%= takumi[i].kategori %>"
+                      data-harga="<%= takumi[i].harga %>"
+                      data-stok="<%= takumi[i].stok %>"
+                      data-deskripsi="<%= takumi[i].deskripsi %>"
+                      data-gambar="<%= takumi[i].gambar %>"
+                    >
+                      Edit
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <button
+                      type="submit"
+                      class="btn btn-outline-danger btn-sm"
+                      onclick="return confirm('Apa kamu yakin ingin menghapus produk ini?');"
+                     >
+                      <i class="fas fa-trash-alt"></i>
+                      Delete
+                    </button>
+                  </form>
+                </td>
+                <td class="text-center">
+                  <!-- Tautan ke halaman detail produk -->
+                  <a href="/takumi/<%= takumi[i]._id %>" class="btn btn-primary btn-sm">Detail</a>
+                </td>
+              </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function searchProduct() {
+        var input = document.getElementById("searchInput").value.toUpperCase();
+        var rows = document.querySelectorAll("#dataTable tbody tr");
+
+        rows.forEach(function (row) {
+          var productName = row
+            .getElementsByTagName("td")[1]
+            .textContent.toUpperCase();
+
+          if (productName.indexOf(input) > -1) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      }
+    </script>
+     <script>
+      // Mendapatkan referensi ke tombol "Lihat Keranjang"
+      const lihatKeranjangBtn = document.getElementById('lihatKeranjangBtn');
+
+      // Menambahkan event listener untuk menangani klik tombol
+      lihatKeranjangBtn.addEventListener('click', async function() {
+          try {
+              // Lakukan permintaan ke server untuk mendapatkan data keranjang
+              const response = await fetch('/takumi/keranjang');
+              
+              // Periksa status respons
+              if (!response.ok) {
+                  throw new Error('Gagal mengambil data keranjang');
+              }
+
+              // Ubah respons menjadi objek JSON
+              const keranjangData = await response.json();
+
+              // Tampilkan data keranjang (misalnya, dengan mengirimkannya ke halaman baru atau dengan menggunakan modul pop-up)
+              console.log('Data Keranjang:', keranjangData);
+              
+              // Contoh: Redirect pengguna ke halaman keranjang
+              window.location.href = '/takumi/keranjang'; // Ubah sesuai kebutuhan Anda
+          } catch (error) {
+              // Tangani kesalahan
+              console.error('Terjadi kesalahan saat menampilkan keranjang:', error);
+              // Tampilkan pesan kesalahan kepada pengguna (opsional)
+              alert('Terjadi kesalahan saat menampilkan keranjang');
+          }
+      });
+  </script>
+  </body>
+</html>

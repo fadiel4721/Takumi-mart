@@ -1,0 +1,48 @@
+<!-- views/keranjang.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang Belanja</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Keranjang Belanja</h1>
+        <div class="row mt-4">
+            <% items.forEach(item => { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= item.nama %></h5>
+                            <p class="card-text">Harga: <%= item.harga %></p>
+                            <a href="#" class="btn btn-danger btn-sm" onclick="deleteItem('<%= item._id %>')">Hapus</a>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <script>
+        function deleteItem(itemId) {
+            if (confirm('Apakah Anda yakin ingin menghapus produk ini dari keranjang?')) {
+                fetch(`/keranjang/${itemId}`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Terjadi kesalahan saat menghapus produk dari keranjang');
+                    }
+                })
+                .catch(error => {
+                    console.error('Terjadi kesalahan saat menghapus produk dari keranjang:', error);
+                    alert('Terjadi kesalahan saat menghapus produk dari keranjang');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
